@@ -1,0 +1,63 @@
+2018-11-06 17:45:18,165-ERROR-Ptt_Crawler-Can't extract the article! https://www.ptt.cc/bbs/DC_SALE/M.1541492896.A.3F5.html
+Traceback (most recent call last):
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 132, in parse_article
+    article_item = self.extract_multiple_items(article_item)
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 192, in extract_multiple_items
+    assert len(item_list) == len(price_list)
+AssertionError
+2018-11-06 17:45:41,451-ERROR-Ptt_Crawler-Can't extract the article! https://www.ptt.cc/bbs/DC_SALE/M.1541473500.A.18F.html
+Traceback (most recent call last):
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 132, in parse_article
+    article_item = self.extract_multiple_items(article_item)
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 192, in extract_multiple_items
+    assert len(item_list) == len(price_list)
+AssertionError
+2018-11-06 17:45:50,720-ERROR-Ptt_Crawler-Can't extract the article! https://www.ptt.cc/bbs/DC_SALE/M.1541476474.A.42B.html
+Traceback (most recent call last):
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 132, in parse_article
+    article_item = self.extract_multiple_items(article_item)
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 192, in extract_multiple_items
+    assert len(item_list) == len(price_list)
+AssertionError
+2018-11-06 17:45:59,980-ERROR-Ptt_Crawler-Can't extract the article! https://www.ptt.cc/bbs/DC_SALE/M.1541479338.A.EC9.html
+Traceback (most recent call last):
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 132, in parse_article
+    article_item = self.extract_multiple_items(article_item)
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 192, in extract_multiple_items
+    assert len(item_list) == len(price_list)
+AssertionError
+2018-11-06 17:46:25,374-ERROR-Ptt_Crawler-Can't extract the article! https://www.ptt.cc/bbs/DC_SALE/M.1541435685.A.BA0.html
+Traceback (most recent call last):
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 132, in parse_article
+    article_item = self.extract_multiple_items(article_item)
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 192, in extract_multiple_items
+    assert len(item_list) == len(price_list)
+AssertionError
+2018-11-06 17:46:32,353-ERROR-Ptt_Crawler-Can't extract the article! https://www.ptt.cc/bbs/DC_SALE/M.1541462055.A.C93.html
+Traceback (most recent call last):
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 132, in parse_article
+    article_item = self.extract_multiple_items(article_item)
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 192, in extract_multiple_items
+    assert len(item_list) == len(price_list)
+AssertionError
+2018-11-06 17:46:36,997-ERROR-Ptt_Crawler-Somthing get wrong on article parsing! https://www.ptt.cc/bbs/DC_SALE/M.1541464715.A.6E4.html
+Traceback (most recent call last):
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 124, in parse_article
+    meta_item, article_item = self.parse_unregular_article(soup, meta)
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 159, in parse_unregular_article
+    soup.select('.article-metaline')[2].select_one('.article-meta-value').text)
+IndexError: list index out of range
+2018-11-06 17:47:00,206-ERROR-Ptt_Crawler-Can't extract the article! https://www.ptt.cc/bbs/DC_SALE/M.1541420862.A.4C0.html
+Traceback (most recent call last):
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 132, in parse_article
+    article_item = self.extract_multiple_items(article_item)
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 192, in extract_multiple_items
+    assert len(item_list) == len(price_list)
+AssertionError
+2018-11-06 17:47:09,474-ERROR-Ptt_Crawler-Somthing get wrong on article parsing! https://www.ptt.cc/bbs/DC_SALE/M.1541425314.A.B2C.html
+Traceback (most recent call last):
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 124, in parse_article
+    meta_item, article_item = self.parse_unregular_article(soup, meta)
+  File "F:\Works\Used_Shopping_Site\used_shopping_site\Crawler\ptt_crawler.py", line 169, in parse_unregular_article
+    article_item[tags[tag]] = re.findall(r'{}(.*?)¡i'.format(tag), article_contents, re.M | re.S)[0]
+IndexError: list index out of range
