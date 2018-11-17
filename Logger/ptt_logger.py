@@ -9,7 +9,7 @@ class Ptt_Logger():
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         self.logger.addHandler(stream_handler)
-        file_handler = logging.FileHandler('Crawler/Logging/crawler_log.log')
+        file_handler = logging.FileHandler('Logs/crawler_log.log')
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
 

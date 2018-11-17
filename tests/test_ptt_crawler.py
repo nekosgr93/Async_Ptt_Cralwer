@@ -1,22 +1,28 @@
 import pytest
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from Crawlers.ptt_search import Base_Crawler
+from bs4 import BeautifulSoup
 import requests
-from requests.exceptions import HTTPError
-from ..ptt_search import Ptt_Crawler
 
 
-def add_test_case(url):
-    try:
-        resp = requests.get(url)
-        resp.raise_for_status
-    except HTTPError:
-        print('HttpConnection Error')
-    else:
-        file_name = 'ptt' + hash(url.split('/')[-1]) + '.html'
-        path = 'test_data/' + file_name
-        with open(path, encoding='utf-8') as f:
-            f.write(resp.text)
+def add_test_data(url, category, filename):
+    text = requests.get(url).text
+    path = 'test_data/'
+    file_name = path + 'test_{}_{}.html'.format(category, filename)
+    with open(file_name, 'w', encoding='utf-8') as f:
+        f.write(text)
 
-def test_ptt_crawler():
-    crawler = Ptt_Crawler
-    
+# @pytest.mark.asyncio
+# async def test_crawler_parse():
+#     url = 'https://www.ptt.cc/bbs/DC_SALE/M.1423921790.A.D8D.html'
 
+
+@pytest.mark.asyncio
+async def test_crawler_get_next_page():
+    with open('tests/test_data/test_page_index.html', 'r', encoding='utf-8') as f:
+        raw = f.read()
+        soup = BeautifulSoup(raw, 'lxml')
+        crawler = Base_Crawler()
+        assert crawler._get_next_page_url(soup) == 'https://www.ptt.cc/bbs/DC_SALE/index4018.html'

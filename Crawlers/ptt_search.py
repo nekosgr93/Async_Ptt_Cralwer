@@ -26,8 +26,9 @@ class Base_Crawler():
         'Dec': 12
     }
 
-    def __init__(self, loop, total_page=1, numbers_of_article='all',
-                 get_random_articles=False, query_str=None, title_filter=None):
+    def __init__(self, total_page=1, numbers_of_article='all',
+                 get_random_articles=False, query_str=None, title_filter=None,
+                 ):
         self.total_page = total_page
         self.numbers_of_article = numbers_of_article
         self.query_str = query_str
@@ -37,8 +38,6 @@ class Base_Crawler():
             self.start_url = 'https://www.ptt.cc/bbs/DC_SALE/search?q={}'.format(query_str)
         else:
             self.start_url = 'https://www.ptt.cc/bbs/DC_SALE/index.html'
-
-        self.session = aiohttp.ClientSession(loop=loop)
 
     @property
     def total_page(self):
@@ -74,61 +73,41 @@ class Base_Crawler():
         else:
             raise Exception("[get_random_articles] must set to either True or False")
 
-    async def main(self):
-        try:
-            await self._parse()
-        finally:
-            await self.session.close()
+    async def parse(self):
+        async with aiohttp.ClientSession() as session:
+            current_page = await self.fetch(session, self.start_url)
 
-    async def fetch(self, url):
-        async with self.session.get(url) as resp:
-            assert resp.status == 200
-            return await resp.text()
+            while current_page:
+                articles = self.get_articles(current_page)
+                if articles:
+                    for article in articles:
+                        try:
+                            article_url = urljoin(self.start_url, article.select_one('.title a')['href'])
+                            raw_content = await self.fetch(session, article_url)
+                            item = self.extract_article_content(article_url, raw_content)
+                        except Exception as e:
+                            # TODO: find exception
+                            print(article.select_one('.title a').get('href', ''))
+                            print(e)
+                            continue
+                        else:
+                            self.items.append(item)
 
-    async def _parse(self):
-        html = await self.fetch(self.start_url)
-        current_page = BeautifulSoup(html, 'lxml')
-
-        while current_page:
-            articles = self._get_articles(current_page)
-            if articles:
-                for article in articles:
-                    try:
-                        item = await self._parse_article(article)
-                    except Exception as e:
-                        # TODO: find exception
-                        print(article.select_one('.title a').get('href', ''))
-                        print(e)
-                        continue
+                    if self.page < self.total_page:
+                        try:
+                            next_page_url = self._get_next_page_url(current_page)
+                            current_page = await self.fetch(session, next_page_url)
+                        except AssertionError:
+                            break
+                        self.page += 1
                     else:
-                        self.items.append(item)
-
-                if self.page < self.total_page:
-                    try:
-                        current_page = await self._get_next_page(current_page)
-                    except AssertionError:
-                        current_page = ''
-                    self.page += 1
+                        break
                 else:
-                    current_page = ''
-            else:
-                print('There\'s no articles. Try another query strings or board')
-                break
+                    print('There\'s no articles. Try another query strings or board')
+                    break
 
-    async def _get_next_page(self, current_page_soup):
-        '''
-        receive a current page soup and return the nextpage soup
-        '''
-        next_page_url = current_page_soup.select('.btn-group.btn-group-paging .btn.wide')[1].get('href', '')
-        if next_page_url:
-            url = urljoin(self.start_url, next_page_url)
-            html = await self.fetch(url)
-            next_page_soup = BeautifulSoup(html, 'lxml')
-        else:
-            next_page_soup = ''
-        return next_page_soup
-
-    def _get_articles(self, current_page):
+    def get_articles(self, current_page_raw):
+        current_page = BeautifulSoup(current_page_raw, 'lxml')
         articles = current_page.select('.r-ent')
         if articles:
             if self.title_filter is not None:
@@ -151,19 +130,13 @@ class Base_Crawler():
             pass
         return title_match
 
-    async def _parse_article(self, article):
-        article_url = urljoin(self.start_url, article.select_one('.title a').get('href'))
-        raw_content = await self.fetch(article_url)
-        item = self.extract_article_content(article_url, raw_content)
-        return item
-
     def extract_article_content(self, url, raw_content):
         soup = BeautifulSoup(raw_content, 'lxml')
         item = {}
-        meta = soup.select('.article-metaline')
-        item['title'] = meta[0].extract().text
-        item['author'] = meta[1].extract().text
-        date = meta[2].extract().select_one('.article-meta-value').text
+        meta = soup.select('.article-metaline .article-meta-value')
+        item['author'] = meta[0].extract().text
+        item['title'] = meta[1].extract().text
+        date = meta[2].extract().text
         item['date'] = self._change_to_datetime(date)
         item['article_url'] = url
         soup.select_one('.article-metaline-right').decompose()
@@ -179,12 +152,33 @@ class Base_Crawler():
                                     date_time[1],
                                     date_time[2])
 
+    """Don't overwrite functions below"""
+    def _get_next_page_url(self, current_page_soup):
+
+        '''
+        receive a current page soup and return the nextpage soup
+        '''
+        url = current_page_soup.select('.btn-group.btn-group-paging .btn.wide')[1].get('href', None)
+        assert url is not None
+        next_page_url = urljoin(self.start_url, url)
+        return next_page_url
+
+    async def fetch(self, session, url):
+        async with session.get(url) as resp:
+            assert resp.status == 200
+            return await resp.text()
+
+    async def get_soup(self, session, url):
+        raw_content = await self.fetch(session, url)
+        soup = BeautifulSoup(raw_content, 'lxml')
+        return soup
+
 
 if __name__ == '__main__':
     start = time()
     loop = asyncio.get_event_loop()
-    crawler = Base_Crawler(loop=loop, query_str='D750', title_filter=r'\[售/[^\s]+\]')
-    loop.run_until_complete(crawler.main())
+    crawler = Base_Crawler(query_str='D750', title_filter=r'\[售/[^\s]+\]')
+    loop.run_until_complete(crawler.parse())
     loop.close()
     end = time()
     print(crawler.items)
