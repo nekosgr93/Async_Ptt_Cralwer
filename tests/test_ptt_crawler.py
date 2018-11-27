@@ -2,7 +2,7 @@ import pytest
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from Crawlers.ptt_search import Base_Crawler
+from Ptt_Crawlers.ptt_search import Base_Crawler
 from bs4 import BeautifulSoup
 import requests
 
@@ -19,8 +19,7 @@ def add_test_data(url, category, filename):
 #     url = 'https://www.ptt.cc/bbs/DC_SALE/M.1423921790.A.D8D.html'
 
 
-@pytest.mark.asyncio
-async def test_crawler_get_next_page():
+def test_crawler_get_next_page():
     with open('tests/test_data/test_page_index.html', 'r', encoding='utf-8') as f:
         raw = f.read()
         soup = BeautifulSoup(raw, 'lxml')

@@ -1,16 +1,14 @@
 import re
 import random
 import asyncio
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-import aiohttp
 from time import time
+from urllib.parse import urljoin
+
+from bs4 import BeautifulSoup
+import aiohttp
 
 
 class Base_Crawler():
-    items = []
-    page = 1
-    page_soup = []
     month = {
         'Jan': 1,
         'Feb': 2,
@@ -29,10 +27,12 @@ class Base_Crawler():
     def __init__(self, total_page=1, numbers_of_article='all',
                  get_random_articles=False, query_str=None, title_filter=None,
                  ):
+        self.page = 1
         self.total_page = total_page
         self.numbers_of_article = numbers_of_article
         self.query_str = query_str
         self.title_filter = title_filter
+        self.items = []
 
         if self.query_str is not None:
             self.start_url = 'https://www.ptt.cc/bbs/DC_SALE/search?q={}'.format(query_str)
