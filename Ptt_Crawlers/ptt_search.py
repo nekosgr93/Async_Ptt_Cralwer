@@ -26,13 +26,16 @@ class Base_Crawler():
 
     def __init__(self, total_page=1, numbers_of_article='all',
                  get_random_articles=False, query_str=None, title_filter=None,
-                 ):
+                 add_test_data=False, test_data_num=5):
         self.page = 1
         self.total_page = total_page
         self.numbers_of_article = numbers_of_article
         self.query_str = query_str
         self.title_filter = title_filter
+        self.raw_articles = {}
         self.items = []
+        self.add_test_data = add_test_data
+        self.test_data_num = test_data_num
 
         if self.query_str is not None:
             self.start_url = 'https://www.ptt.cc/bbs/DC_SALE/search?q={}'.format(query_str)
@@ -92,6 +95,9 @@ class Base_Crawler():
                             continue
                         else:
                             self.items.append(item)
+                            if self.add_test_data and len(self.raw_articles) <= self.test_data_num:
+                                self.raw_articles[article_url] = {'raw_content': raw_content,
+                                                                  'result': item}
 
                     if self.page < self.total_page:
                         try:
@@ -139,6 +145,8 @@ class Base_Crawler():
         date = meta[2].extract().text
         item['date'] = self._change_to_datetime(date)
         item['article_url'] = url
+        for article_metaline in soup.select('.article-metaline'):
+            article_metaline.decompose()
         soup.select_one('.article-metaline-right').decompose()
 
         item['content'] = soup.select_one('#main-content').text.split('--')[0]

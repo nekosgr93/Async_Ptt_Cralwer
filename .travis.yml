@@ -4,6 +4,6 @@ python:
 install:
   - 'pip install pipenv'
   - 'pipenv install --dev'
-before_script: 'flake8 Ptt_Crawler'
-script: 'pytest tests'
+before_script: 'flake8 Ptt_Crawler --ignore=E402'
+script: 'pytest -m test_crawler -v'
 

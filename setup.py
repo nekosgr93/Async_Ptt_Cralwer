@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name="Async_Ptt_Crawler",
-    version="1.1",
+    version="1.3",
     author="nekosgr93",
     description='Ptt Crawler base on asyncio and use async/await syntax',
     long_description=description,
